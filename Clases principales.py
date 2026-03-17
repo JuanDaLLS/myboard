@@ -45,3 +45,23 @@ class ListaDoble:
 
     def obtener_anterior(self, nodo_actual):
         return nodo_actual.anterior if nodo_actual else None
+    
+# Clase: Lista Circular (Scroll Infinito)
+class ListaCircular:
+    def __init__(self):
+        self.cabeza = None
+
+    def agregar(self, contenido):
+        nuevo_nodo = Nodo(contenido)
+        if not self.cabeza:
+            self.cabeza = nuevo_nodo
+            nuevo_nodo.siguiente = self.cabeza # Primer ciclo
+        else:
+            actual = self.cabeza
+            while actual.siguiente != self.cabeza:
+                actual = actual.siguiente
+            actual.siguiente = nuevo_nodo
+            nuevo_nodo.siguiente = self.cabeza # Cierra el círculo [cite: 33]
+
+    def es_vacia(self):
+        return self.cabeza is None
