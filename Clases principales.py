@@ -24,3 +24,24 @@ class ListaSimple:
 
     def contar_total(self):
         return self.total_publicaciones # Cumple con el requisito de conteo 
+    
+# Clase: Lista Doblemente Enlazada (Navegación del Feed)
+class ListaDoble:
+    def __init__(self):
+        self.cabeza = None
+        self.cola = None
+
+    def insertar(self, contenido):
+        nuevo_nodo = Nodo(contenido)
+        if not self.cabeza:
+            self.cabeza = self.cola = nuevo_nodo
+        else:
+            self.cola.siguiente = nuevo_nodo
+            nuevo_nodo.anterior = self.cola
+            self.cola = nuevo_nodo
+
+    def obtener_siguiente(self, nodo_actual):
+        return nodo_actual.siguiente if nodo_actual else None
+
+    def obtener_anterior(self, nodo_actual):
+        return nodo_actual.anterior if nodo_actual else None
