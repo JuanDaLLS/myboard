@@ -1,67 +1,68 @@
 # Clase Principal: Nodo
 class Nodo:
-    def __init__(self, contenido):
-        self.contenido = contenido  # Texto de la publicación 
-        self.siguiente = None       # Puntero al siguiente nodo 
-        self.anterior = None        # Puntero al anterior 
+    def __init__(self, texto):
+        self.texto = texto        # El mensaje de la publicación
+        self.siguiente = None      # Brazo derecho: señala al siguiente
+        self.anterior = None       # Brazo izquierdo: señala al anterior (para la Lista Doble)
+        self.likes = 0             # Espacio para la función extra de "Me gusta"
 
 # Clase: Lista Enlazada Simple (Almacenamiento General)
 class ListaSimple:
     def __init__(self):
-        self.cabeza = None
-        self.total_publicaciones = 0 # Contador para estadísticas (cuantas publicaciones hay)
+        self.cabeza = None         # La primera persona de la fila
+        self.contador = 0          # Cuántas personas hay en total
 
-    def agregar(self, contenido):
-        nuevo_nodo = Nodo(contenido)
-        if not self.cabeza:
-            self.cabeza = nuevo_nodo
+    def agregar_post(self, texto):
+        nuevo = Nodo(texto)
+        if not self.cabeza:        # Si la fila está vacía, este es el primero
+            self.cabeza = nuevo
         else:
             actual = self.cabeza
-            while actual.siguiente:
+            while actual.siguiente: # Caminamos hasta el final de la fila
                 actual = actual.siguiente
-            actual.siguiente = nuevo_nodo
-        self.total_publicaciones += 1
+            actual.siguiente = nuevo # El último ahora señala al nuevo
+        self.contador += 1         # Llevamos el registro para el conteo total
 
-    def contar_total(self):
-        return self.total_publicaciones # Cumple con el requisito de conteo 
-    
-# Clase: Lista Doblemente Enlazada (Navegación del Feed)
+    def buscar_por_palabra(self, palabra):
+        # Recorre la fila buscando un mensaje específico
+        actual = self.cabeza
+        while actual:
+            if palabra.lower() in actual.texto.lower():
+                return f"Encontrado: {actual.texto}"
+            actual = actual.siguiente
+        return "No se encontró la publicación."
+
+# Clase: Lista Doblemente Enlazada (Navegación del Feed)    
 class ListaDoble:
     def __init__(self):
         self.cabeza = None
-        self.cola = None
+        self.ultimo = None
 
-    def insertar(self, contenido):
-        nuevo_nodo = Nodo(contenido)
+    def insertar(self, texto):
+        nuevo = Nodo(texto)
         if not self.cabeza:
-            self.cabeza = self.cola = nuevo_nodo
+            self.cabeza = self.ultimo = nuevo
         else:
-            self.cola.siguiente = nuevo_nodo
-            nuevo_nodo.anterior = self.cola
-            self.cola = nuevo_nodo
+            self.ultimo.siguiente = nuevo # El último señala al nuevo
+            nuevo.anterior = self.ultimo  # El nuevo se agarra del que era último
+            self.ultimo = nuevo           # Ahora el nuevo es el final oficial
 
-    def obtener_siguiente(self, nodo_actual):
-        return nodo_actual.siguiente if nodo_actual else None
-
-    def obtener_anterior(self, nodo_actual):
-        return nodo_actual.anterior if nodo_actual else None
-    
 # Clase: Lista Circular (Scroll Infinito)
 class ListaCircular:
     def __init__(self):
         self.cabeza = None
 
-    def agregar(self, contenido):
-        nuevo_nodo = Nodo(contenido)
+    def agregar_circular(self, texto):
+        nuevo = Nodo(texto)
         if not self.cabeza:
-            self.cabeza = nuevo_nodo
-            nuevo_nodo.siguiente = self.cabeza # Primer ciclo
+            self.cabeza = nuevo
+            nuevo.siguiente = self.cabeza # Se señala a sí mismo para cerrar el círculo
         else:
             actual = self.cabeza
-            while actual.siguiente != self.cabeza:
+            while actual.siguiente != self.cabeza: # Buscamos el final del círculo
                 actual = actual.siguiente
-            actual.siguiente = nuevo_nodo
-            nuevo_nodo.siguiente = self.cabeza # Cierra el círculo [cite: 33]
+            actual.siguiente = nuevo    # El último ahora señala al nuevo
+            nuevo.siguiente = self.cabeza # El nuevo se conecta con el principio
 
     def es_vacia(self):
         return self.cabeza is None
