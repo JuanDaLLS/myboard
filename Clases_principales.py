@@ -1,3 +1,7 @@
+#imports para el funcionamiento del gestor de archivos
+import json
+import os
+
 # Clase Principal: Nodo
 class Nodo:
     def __init__(self, texto):
@@ -66,3 +70,28 @@ class ListaCircular:
 
     def es_vacia(self):
         return self.cabeza is None
+
+
+
+class GestorArchivos:
+    ARCHIVO = "publicaciones.json"
+
+    def guardar(self, lista):
+        datos = []
+        if not lista.cabeza:
+            return
+        actual = lista.cabeza
+        while True:
+            datos.append({"titulo": actual.dato.titulo, "cuerpo": actual.dato.cuerpo, "likes": actual.dato.likes})
+            actual = actual.next
+            if actual == lista.cabeza:
+                break
+        with open(self.ARCHIVO, "w", encoding="utf-8") as f:
+            json.dump(datos, f, ensure_ascii=False, indent=2)
+
+    def cargar(self, lista):
+        if not os.path.exists(self.ARCHIVO):
+            return
+        with open(self.ARCHIVO, "r", encoding="utf-8") as f:
+            for item in json.load(f):
+                lista.agregar(item["titulo"], item["cuerpo"])

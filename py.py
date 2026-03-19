@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
+from Clases_principales import GestorArchivos
 
 class Publicacion: 
     def __init__(self, titulo, cuerpo):
@@ -58,6 +59,8 @@ class AppCircular(tk.Tk):
         self.title("Sistema de Publicaciones Circulares")
         self.geometry("700x800")
         self.config(bg="#f4f4f9")
+        self.modo_circular = False
+        self.gestor = GestorArchivos()
 
         self.lista = ListaCircularDoblementeEnlazada(items)
         self.puntero_superior = self.lista.cabeza
@@ -72,6 +75,8 @@ class AppCircular(tk.Tk):
         self.bind("<MouseWheel>", self.procesar_scroll)
         self.bind("<Button-4>", self.procesar_scroll)
         self.bind("<Button-5>", self.procesar_scroll)
+        ## LLAMAR AL GUARDADO
+        self.protocol("WM_DELETE_WINDOW", lambda: [self.gestor.guardar(self.lista), self.destroy()])
 
     def _crear_interfaz(self):
         # --- FORMULARIO ---
@@ -104,6 +109,10 @@ class AppCircular(tk.Tk):
             # Línea divisoria sutil
             tk.Frame(self.container_feed, bg="#eee", height=1).pack(fill="x", padx=10)
             self.labels.append(lbl)
+
+        #PARA contador y para toggle de modo circular 
+        tk.Button(self, text="Total de publicaciones", command=self.contar).pack()
+        tk.Button(self, text="Activar/Desactivar Circular", command=self.toggle_circular).pack()
 
     def ejecutar_agregar(self):
         t = self.entry_titulo.get()
@@ -140,6 +149,14 @@ class AppCircular(tk.Tk):
             self.puntero_superior = self.puntero_superior.prev
         
         self.actualizar_pantalla()
+        #MeTODOS PARA CONTAR Y EL TOGGLE
+    def contar(self):
+        messagebox.showinfo("Total", f"Publicaciones: {self.lista.cabeza and sum(1 for _ in iter(lambda: None, None))}")
+
+    def toggle_circular(self):
+        self.modo_circular = not self.modo_circular
+        estado = "activado" if self.modo_circular else "desactivado"
+        messagebox.showinfo("Modo circular", f"Scroll infinito {estado}")
 
 if __name__ == "__main__":
     app = AppCircular()
