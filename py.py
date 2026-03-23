@@ -1,6 +1,6 @@
 import tkinter as tk
-from tkinter import messagebox
-from Clases_principales import GestorArchivos
+from tkinter import messagebox, font
+from Clases_principales import ListaSimple, ListaCircularDoble, GestorArchivos
 
 class Publicacion: 
     def __init__(self, titulo, cuerpo):
@@ -8,157 +8,135 @@ class Publicacion:
         self.cuerpo = cuerpo 
         self.likes = 0
 
-    def __str__(self):
-        resumen_cuerpo = (self.cuerpo[:30] + '...') if len(self.cuerpo) > 30 else self.cuerpo
-        return f"{self.titulo.upper()}: {resumen_cuerpo} ({self.likes} likes)"
-
-class Nodo:
-    def __init__(self, dato):
-        self.dato = dato
-        self.next = None
-        self.prev = None
-
-class ListaCircularDoblementeEnlazada:
-    def __init__(self, datos=None):
-        self.cabeza = None
-        if not datos: return
-        
-        anterior = None
-        for d in datos:
-            # d puede ser un string (para datos iniciales) o un objeto Publicacion
-            obj = Publicacion(d, "Sin contenido") if isinstance(d, str) else d
-            nuevo = Nodo(obj)
-            if not self.cabeza:
-                self.cabeza = nuevo
-            if anterior:
-                anterior.next = nuevo
-                nuevo.prev = anterior
-            anterior = nuevo
-        
-        if self.cabeza:
-            anterior.next = self.cabeza
-            self.cabeza.prev = anterior
-    
-    def agregar(self, titulo, cuerpo):
-        p = Publicacion(titulo, cuerpo)
-        nuevo = Nodo(p)
-        if not self.cabeza:
-            self.cabeza = nuevo
-            nuevo.next = nuevo
-            nuevo.prev = nuevo
-        else:
-            ultimo = self.cabeza.prev
-            ultimo.next = nuevo
-            nuevo.prev = ultimo
-            nuevo.next = self.cabeza
-            self.cabeza.prev = nuevo
-
-class AppCircular(tk.Tk):
-    def __init__(self, items= None):
+class AppNeon(tk.Tk):
+    def __init__(self):
         super().__init__()
-        self.title("Sistema de Publicaciones Circulares")
-        self.geometry("700x800")
-        self.config(bg="#f4f4f9")
-        self.modo_circular = False
-        self.gestor = GestorArchivos()
-
-        self.lista = ListaCircularDoblementeEnlazada(items)
-        self.puntero_superior = self.lista.cabeza
+        self.title("URL Social - Edición Neon")
+        self.geometry("600x800")
         
-        self.num_slots = 8 
-        self.labels = []
+        # Colores llamativos
+        self.bg_main = "#FFFFFF"   # Gris oscuro
+        self.accent_1 = "#16ADAA"  # Cian
+        self.accent_2 = "#4375E8"  # Rosa
+        self.text_color = "#000000"
+        
+        self.config(bg=self.bg_main)
+        
+        # Estructuras [cite: 30, 32, 34]
+        self.lista_general = ListaSimple()
+        self.lista_feed = ListaCircularDoble()
+        self.gestor = GestorArchivos()
+        self.modo_circular = False
+        
+        self.gestor.cargar(self.lista_general, self.lista_feed)
+        self.puntero_actual = self.lista_feed.cabeza
 
         self._crear_interfaz()
         self.actualizar_pantalla()
-
-        # Eventos de scroll
-        self.bind("<MouseWheel>", self.procesar_scroll)
-        self.bind("<Button-4>", self.procesar_scroll)
-        self.bind("<Button-5>", self.procesar_scroll)
-        ## LLAMAR AL GUARDADO
-        self.protocol("WM_DELETE_WINDOW", lambda: [self.gestor.guardar(self.lista), self.destroy()])
+        self.protocol("WM_DELETE_WINDOW", lambda: [self.gestor.guardar(self.lista_general), self.destroy()])
 
     def _crear_interfaz(self):
-        # --- FORMULARIO ---
-        frame_form = tk.LabelFrame(self, text=" Nueva Publicación ", font=("Arial", 10, "bold"), bg="#f4f4f9", padx=15, pady=15)
-        frame_form.pack(fill="x", padx=20, pady=10)
-
-        tk.Label(frame_form, text="Título:", bg="#f4f4f9").pack(anchor="w")
-        self.entry_titulo = tk.Entry(frame_form, font=("Arial", 11))
-        self.entry_titulo.pack(fill="x", pady=(0, 10))
-
-        tk.Label(frame_form, text="Cuerpo:", bg="#f4f4f9").pack(anchor="w")
-        self.text_cuerpo = tk.Text(frame_form, font=("Arial", 10), height=4) # Cuadro de texto multilinea
-        self.text_cuerpo.pack(fill="x", pady=(0, 10))
-
-        self.btn_post = tk.Button(frame_form, text="PUBLICAR", bg="#1877F2", fg="white", 
-                                  font=("Arial", 10, "bold"), command=self.ejecutar_agregar)
-        self.btn_post.pack(fill="x")
-
-        # --- SEPARADOR ---
-        tk.Label(self, text="↓ Feed Infinito (Scroll para navegar) ↓", font=("Arial", 9, "italic"), bg="#f4f4f9", fg="#666").pack()
-
-        # --- CONTENEDOR DE POSTS ---
-        self.container_feed = tk.Frame(self, bg="white", bd=1, relief="solid")
-        self.container_feed.pack(padx=20, pady=10, fill="both", expand=True)
-
-        for _ in range(self.num_slots):
-            lbl = tk.Label(self.container_feed, text="", font=("Segoe UI", 10), bg="white", 
-                           pady=8, anchor="w", justify="left")
-            lbl.pack(fill="x", padx=15)
-            # Línea divisoria sutil
-            tk.Frame(self.container_feed, bg="#eee", height=1).pack(fill="x", padx=10)
-            self.labels.append(lbl)
-
-        #PARA contador y para toggle de modo circular 
-        tk.Button(self, text="Total de publicaciones", command=self.contar).pack()
-        tk.Button(self, text="Activar/Desactivar Circular", command=self.toggle_circular).pack()
-
-    def ejecutar_agregar(self):
-        t = self.entry_titulo.get()
-        c = self.text_cuerpo.get("1.0", "end-1c") 
+        # Barra de Búsqueda con funcionalidad corregida 
+        frame_busq = tk.Frame(self, bg=self.accent_1, padx=2, pady=2)
+        frame_busq.pack(fill="x", padx=20, pady=15)
         
-        if t.strip() == "" or c.strip() == "":
-            messagebox.showwarning("Campos vacíos", "Por favor, llena ambos campos.")
-            return
+        inner_busq = tk.Frame(frame_busq, bg=self.bg_main)
+        inner_busq.pack(fill="x")
 
-        self.lista.agregar(t, c)
+        self.ent_busqueda = tk.Entry(inner_busq, bg=self.bg_main, fg=self.accent_1, 
+                                     insertbackground="white", border=0, font=("Arial", 11))
+        self.ent_busqueda.pack(side="left", padx=10, pady=8, expand=True, fill="x")
         
-        self.entry_titulo.delete(0, tk.END)
-        self.text_cuerpo.delete("1.0", tk.END)
+        tk.Button(inner_busq, text="🔍 BUSCAR", bg=self.accent_1, fg=self.bg_main, 
+                  font=("Arial", 9, "bold"), command=self.ejecutar_busqueda).pack(side="right")
+
+        # Formulario de Post
+        frame_post = tk.Frame(self, bg=self.accent_2, padx=2, pady=2)
+        frame_post.pack(fill="x", padx=20, pady=10)
         
-        if not self.puntero_superior:
-            self.puntero_superior = self.lista.cabeza
-            
-        self.actualizar_pantalla()
-        messagebox.showinfo("Éxito", "¡Publicación añadida al círculo!")
+        f_body = tk.Frame(frame_post, bg=self.bg_main, padx=15, pady=15)
+        f_body.pack(fill="x")
+
+        tk.Label(f_body, text="NUEVO POST", fg=self.accent_2, bg=self.bg_main, font=("Arial", 10, "bold")).pack(anchor="w")
+        self.ent_t = tk.Entry(f_body, bg="#3d4446", fg="white", border=0)
+        self.ent_t.pack(fill="x", pady=5, ipady=3)
+        
+        self.txt_c = tk.Text(f_body, bg="#3d4446", fg="white", height=3, border=0)
+        self.txt_c.pack(fill="x", pady=5)
+
+        tk.Button(f_body, text="PUBLICAR EN EL FEED", bg=self.accent_2, fg="white", 
+                  font=("Arial", 10, "bold"), command=self.publicar).pack(fill="x", pady=5)
+
+        # Visualizador de Publicación
+        self.card = tk.Frame(self, bg="#3d4446", padx=25, pady=25)
+        self.card.pack(fill="both", expand=True, padx=20, pady=20)
+        
+        self.lbl_t = tk.Label(self.card, text="", fg=self.accent_1, bg="#3d4446", font=("Arial", 16, "bold"))
+        self.lbl_t.pack()
+        self.lbl_c = tk.Label(self.card, text="", fg="white", bg="#3d4446", font=("Arial", 12), wraplength=450)
+        self.lbl_c.pack(pady=20)
+        
+        self.btn_like = tk.Button(self.card, text="❤️ 0 LIKES", bg=self.accent_2, fg="white", 
+                                  command=self.dar_like)
+        self.btn_like.pack()
+
+        # Botones de Navegación [cite: 52, 53]
+        nav_f = tk.Frame(self, bg=self.bg_main)
+        nav_f.pack(pady=10)
+        tk.Button(nav_f, text="◀ ANTERIOR", bg=self.accent_1, command=self.anterior).pack(side="left", padx=20)
+        tk.Button(nav_f, text="SIGUIENTE ▶", bg=self.accent_1, command=self.siguiente).pack(side="right", padx=20)
+
+    def ejecutar_busqueda(self):
+        """Implementación real de la búsqueda """
+        palabra = self.ent_busqueda.get()
+        if not palabra: return
+        
+        resultados = self.lista_general.buscar_por_palabra(palabra)
+        if resultados:
+            mensaje = f"Se encontraron {len(resultados)} posts:\n\n"
+            for r in resultados:
+                mensaje += f"• {r.titulo}\n"
+            messagebox.showinfo("Resultados", mensaje)
+        else:
+            messagebox.showinfo("Búsqueda", "No hay coincidencias.")
+
+    def publicar(self):
+        t, c = self.ent_t.get(), self.txt_c.get("1.0", "end-1c")
+        if t and c:
+            p = Publicacion(t, c)
+            self.lista_general.agregar(p)
+            self.lista_feed.agregar(p)
+            if not self.puntero_actual: self.puntero_actual = self.lista_feed.cabeza
+            self.actualizar_pantalla()
+            self.ent_t.delete(0, tk.END)
+            self.txt_c.delete("1.0", tk.END)
 
     def actualizar_pantalla(self):
-        if not self.puntero_superior: return
-        
-        aux = self.puntero_superior
-        for lbl in self.labels:
-            lbl.config(text=str(aux.dato)) 
-            aux = aux.next
+        if self.puntero_actual:
+            p = self.puntero_actual.dato
+            self.lbl_t.config(text=p.titulo.upper())
+            self.lbl_c.config(text=p.cuerpo)
+            self.btn_like.config(text=f"❤️ {p.likes} LIKES")
 
-    def procesar_scroll(self, event):
-        if not self.puntero_superior: return
-        if event.num == 5 or event.delta < 0: 
-            self.puntero_superior = self.puntero_superior.next
-        elif event.num == 4 or event.delta > 0:
-            self.puntero_superior = self.puntero_superior.prev
-        
-        self.actualizar_pantalla()
-        #MeTODOS PARA CONTAR Y EL TOGGLE
-    def contar(self):
-        messagebox.showinfo("Total", f"Publicaciones: {self.lista.cabeza and sum(1 for _ in iter(lambda: None, None))}")
+    def dar_like(self):
+        if self.puntero_actual:
+            self.puntero_actual.dato.likes += 1
+            self.actualizar_pantalla()
 
-    def toggle_circular(self):
-        self.modo_circular = not self.modo_circular
-        estado = "activado" if self.modo_circular else "desactivado"
-        messagebox.showinfo("Modo circular", f"Scroll infinito {estado}")
+    def siguiente(self):
+        if self.puntero_actual:
+            if not self.modo_circular and self.puntero_actual.siguiente == self.lista_feed.cabeza:
+                messagebox.showinfo("Fin", "Llegaste al final. Activa el modo circular.")
+                return
+            self.puntero_actual = self.puntero_actual.siguiente
+            self.actualizar_pantalla()
+
+    def anterior(self):
+        if self.puntero_actual:
+            if not self.modo_circular and self.puntero_actual == self.lista_feed.cabeza:
+                return
+            self.puntero_actual = self.puntero_actual.anterior
+            self.actualizar_pantalla()
 
 if __name__ == "__main__":
-    app = AppCircular()
-    app.mainloop()
-    
+    AppNeon().mainloop()
