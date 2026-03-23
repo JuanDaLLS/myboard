@@ -1,97 +1,77 @@
-#imports para el funcionamiento del gestor de archivos
 import json
 import os
 
-# Clase Principal: Nodo
 class Nodo:
-    def __init__(self, texto):
-        self.texto = texto        # El mensaje de la publicación
-        self.siguiente = None      # Brazo derecho: señala al siguiente
-        self.anterior = None       # Brazo izquierdo: señala al anterior (para la Lista Doble)
-        self.likes = 0             # Espacio para la función extra de "Me gusta"
+    def __init__(self, dato):
+        self.dato = dato
+        self.siguiente = None
+        self.anterior = None
 
-# Clase: Lista Enlazada Simple (Almacenamiento General)
 class ListaSimple:
     def __init__(self):
-        self.cabeza = None         # La primera persona de la fila
-        self.contador = 0          # Cuántas personas hay en total
+        self.cabeza = None
+        self.contador = 0
 
-    def agregar_post(self, texto):
-        nuevo = Nodo(texto)
-        if not self.cabeza:        # Si la fila está vacía, este es el primero
+    def agregar(self, publicacion):
+        nuevo = Nodo(publicacion)
+        if not self.cabeza:
             self.cabeza = nuevo
         else:
             actual = self.cabeza
-            while actual.siguiente: # Caminamos hasta el final de la fila
+            while actual.siguiente:
                 actual = actual.siguiente
-            actual.siguiente = nuevo # El último ahora señala al nuevo
-        self.contador += 1         # Llevamos el registro para el conteo total
+            actual.siguiente = nuevo
+        self.contador += 1
 
     def buscar_por_palabra(self, palabra):
-        # Recorre la fila buscando un mensaje específico
+        """Busca publicaciones que contengan la palabra en título o cuerpo"""
+        resultados = []
         actual = self.cabeza
         while actual:
-            if palabra.lower() in actual.texto.lower():
-                return f"Encontrado: {actual.texto}"
+            if palabra.lower() in actual.dato.titulo.lower() or palabra.lower() in actual.dato.cuerpo.lower():
+                resultados.append(actual.dato)
             actual = actual.siguiente
-        return "No se encontró la publicación."
+        return resultados
 
-# Clase: Lista Doblemente Enlazada (Navegación del Feed)    
-class ListaDoble:
-    def __init__(self):
-        self.cabeza = None
-        self.ultimo = None
-
-    def insertar(self, texto):
-        nuevo = Nodo(texto)
-        if not self.cabeza:
-            self.cabeza = self.ultimo = nuevo
-        else:
-            self.ultimo.siguiente = nuevo # El último señala al nuevo
-            nuevo.anterior = self.ultimo  # El nuevo se agarra del que era último
-            self.ultimo = nuevo           # Ahora el nuevo es el final oficial
-
-# Clase: Lista Circular (Scroll Infinito)
-class ListaCircular:
+class ListaCircularDoble:
     def __init__(self):
         self.cabeza = None
 
-    def agregar_circular(self, texto):
-        nuevo = Nodo(texto)
+    def agregar(self, publicacion):
+        nuevo = Nodo(publicacion)
         if not self.cabeza:
             self.cabeza = nuevo
-            nuevo.siguiente = self.cabeza # Se señala a sí mismo para cerrar el círculo
+            nuevo.siguiente = nuevo
+            nuevo.anterior = nuevo
         else:
-            actual = self.cabeza
-            while actual.siguiente != self.cabeza: # Buscamos el final del círculo
-                actual = actual.siguiente
-            actual.siguiente = nuevo    # El último ahora señala al nuevo
-            nuevo.siguiente = self.cabeza # El nuevo se conecta con el principio
-
-    def es_vacia(self):
-        return self.cabeza is None
-
-
+            ultimo = self.cabeza.anterior
+            ultimo.siguiente = nuevo
+            nuevo.anterior = ultimo
+            nuevo.siguiente = self.cabeza
+            self.cabeza.anterior = nuevo
 
 class GestorArchivos:
-    ARCHIVO = "publicaciones.json"
+    ARCHIVO = "datos_red_social.json"
 
-    def guardar(self, lista):
+    def guardar(self, lista_simple):
         datos = []
-        if not lista.cabeza:
-            return
-        actual = lista.cabeza
-        while True:
-            datos.append({"titulo": actual.dato.titulo, "cuerpo": actual.dato.cuerpo, "likes": actual.dato.likes})
-            actual = actual.next
-            if actual == lista.cabeza:
-                break
+        actual = lista_simple.cabeza
+        while actual:
+            datos.append({
+                "titulo": actual.dato.titulo,
+                "cuerpo": actual.dato.cuerpo,
+                "likes": actual.dato.likes
+            })
+            actual = actual.siguiente
         with open(self.ARCHIVO, "w", encoding="utf-8") as f:
             json.dump(datos, f, ensure_ascii=False, indent=2)
 
-    def cargar(self, lista):
-        if not os.path.exists(self.ARCHIVO):
-            return
+    def cargar(self, lista_simple, lista_circular):
+        if not os.path.exists(self.ARCHIVO): return
         with open(self.ARCHIVO, "r", encoding="utf-8") as f:
+            from interfaz import Publicacion
             for item in json.load(f):
-                lista.agregar(item["titulo"], item["cuerpo"])
+                p = Publicacion(item["titulo"], item["cuerpo"])
+                p.likes = item.get("likes", 0)
+                lista_simple.agregar(p)
+                lista_circular.agregar(p)
