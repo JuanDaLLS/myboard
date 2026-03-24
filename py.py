@@ -24,7 +24,7 @@ class ListaCircularDoblementeEnlazada:
         
         anterior = None
         for d in datos:
-            # d puede ser un string (para datos iniciales) o un objeto Publicacion
+        
             obj = Publicacion(d, "Sin contenido") if isinstance(d, str) else d
             nuevo = Nodo(obj)
             if not self.cabeza:
@@ -68,13 +68,13 @@ class AppCircular(tk.Tk):
         self._crear_interfaz()
         self.actualizar_pantalla()
 
-        # Eventos de scroll
+        
         self.bind("<MouseWheel>", self.procesar_scroll)
         self.bind("<Button-4>", self.procesar_scroll)
         self.bind("<Button-5>", self.procesar_scroll)
 
     def _crear_interfaz(self):
-        # --- FORMULARIO ---
+        
         frame_form = tk.LabelFrame(self, text=" Nueva Publicación ", font=("Arial", 10, "bold"), bg="#f4f4f9", padx=15, pady=15)
         frame_form.pack(fill="x", padx=20, pady=10)
 
@@ -83,17 +83,17 @@ class AppCircular(tk.Tk):
         self.entry_titulo.pack(fill="x", pady=(0, 10))
 
         tk.Label(frame_form, text="Cuerpo:", bg="#f4f4f9").pack(anchor="w")
-        self.text_cuerpo = tk.Text(frame_form, font=("Arial", 10), height=4) # Cuadro de texto multilinea
+        self.text_cuerpo = tk.Text(frame_form, font=("Arial", 10), height=4) 
         self.text_cuerpo.pack(fill="x", pady=(0, 10))
 
         self.btn_post = tk.Button(frame_form, text="PUBLICAR", bg="#1877F2", fg="white", 
                                   font=("Arial", 10, "bold"), command=self.ejecutar_agregar)
         self.btn_post.pack(fill="x")
 
-        # --- SEPARADOR ---
-        tk.Label(self, text="↓ Feed Infinito (Scroll para navegar) ↓", font=("Arial", 9, "italic"), bg="#f4f4f9", fg="#666").pack()
+        
+        tk.Label(self, text=" Feed Infinito (Scroll para navegar) ", font=("Arial", 9, "italic"), bg="#f4f4f9", fg="#666").pack()
 
-        # --- CONTENEDOR DE POSTS ---
+
         self.container_feed = tk.Frame(self, bg="white", bd=1, relief="solid")
         self.container_feed.pack(padx=20, pady=10, fill="both", expand=True)
 
@@ -101,7 +101,7 @@ class AppCircular(tk.Tk):
             lbl = tk.Label(self.container_feed, text="", font=("Segoe UI", 10), bg="white", 
                            pady=8, anchor="w", justify="left")
             lbl.pack(fill="x", padx=15)
-            # Línea divisoria sutil
+            
             tk.Frame(self.container_feed, bg="#eee", height=1).pack(fill="x", padx=10)
             self.labels.append(lbl)
 
