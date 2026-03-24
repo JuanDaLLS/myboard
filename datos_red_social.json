@@ -1,0 +1,39 @@
+[
+  {
+    "titulo": "Holaaa",
+    "cuerpo": "Priemr post xdxd",
+    "likes": 4,
+    "comentarios": [
+      "Buenisimo"
+    ],
+    "favorito": false
+  },
+  {
+    "titulo": "Primera publicaion",
+    "cuerpo": "es decir, la segunda\n",
+    "likes": 7,
+    "comentarios": [],
+    "favorito": false
+  },
+  {
+    "titulo": "xd",
+    "cuerpo": "xdxdxd",
+    "likes": 0,
+    "comentarios": [],
+    "favorito": false
+  },
+  {
+    "titulo": "video de youtube",
+    "cuerpo": "100 likes plis",
+    "likes": 1,
+    "comentarios": [],
+    "favorito": true
+  },
+  {
+    "titulo": "Post Nuevo",
+    "cuerpo": "...",
+    "likes": 0,
+    "comentarios": [],
+    "favorito": false
+  }
+]
