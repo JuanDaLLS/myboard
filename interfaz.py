@@ -112,6 +112,19 @@ class AppNeon(tk.Tk):
         self.lbl_c = tk.Label(f_content, text="", fg=self.col_text_main, bg=self.col_bg_card, font=self.font_body, wraplength=320)
         self.lbl_c.pack(pady=20, expand=True) # Etiqueta para el texto del post
         
+        # 1. Etiqueta para mostrar los comentarios existentes
+        self.lbl_comentarios = tk.Label(f_content, text="", fg=self.col_text_sec, bg=self.col_bg_card, font=self.font_ui, justify="left")
+        self.lbl_comentarios.pack(pady=(10, 5), fill="x", anchor="w")
+
+        # 2. Cajita y botón para escribir un comentario nuevo
+        f_add_comment = tk.Frame(f_content, bg=self.col_bg_card)
+        f_add_comment.pack(fill="x", pady=5)
+        
+        self.ent_comentario = tk.Entry(f_add_comment, bg=self.col_bg_deep, fg=self.col_text_main, bd=0)
+        self.ent_comentario.pack(side="left", fill="x", expand=True, ipady=4, padx=(0, 5))
+        
+        tk.Button(f_add_comment, text=" Enviar", command=self.agregar_comentario, bg=self.col_neon_cyan, fg="white", bd=0).pack(side="right")
+
         # Panel de botones de interacción (Like y Favorito)
         f_interact = tk.Frame(f_content, bg=self.col_bg_card)
         f_interact.pack(fill="x", side="bottom")
@@ -145,20 +158,28 @@ class AppNeon(tk.Tk):
     # --- LÓGICA DE FUNCIONAMIENTO ---
 
     def actualizar_pantalla(self):
-        """Actualiza el texto de la tarjeta con la información del post actual"""
-        if self.puntero_actual:
-            p = self.puntero_actual.dato # Obtener el objeto Publicacion que está en el nodo
-            self.lbl_t.config(text=p.titulo.upper())
-            self.lbl_c.config(text=p.cuerpo)
-            self.lbl_likes.config(text=f"❤️ {p.likes} LIKES")
-            self.btn_fav.config(fg="yellow" if p.es_favorito else "white") # Brilla si es favorito
-        else:
-            self.lbl_t.config(text="FIN DEL FEED")
-            self.lbl_c.config(text="No hay publicaciones disponibles.")
-            
-        # Actualiza el número total de posts creados
-        self.lbl_count.config(text=f"Publicaciones Totales: {self.lista_general.contador}")
-
+            """Actualiza el texto de la tarjeta con la información del post actual"""
+            if self.puntero_actual:
+                p = self.puntero_actual.dato 
+                self.lbl_t.config(text=p.titulo.upper())
+                self.lbl_c.config(text=p.cuerpo)
+                self.lbl_likes.config(text=f" {p.likes} LIKES")
+                self.btn_fav.config(fg="yellow" if p.es_favorito else "white")
+                
+                # NUEVO: Lógica para mostrar los últimos 2 comentarios
+                if len(p.comentarios) > 0:
+                    # Unimos los últimos 2 comentarios con un salto de línea
+                    text_comentarios = "Comentarios:\n" + "\n".join([f"• {c}" for c in p.comentarios[-2:]])
+                    self.lbl_comentarios.config(text=text_comentarios)
+                else:
+                    self.lbl_comentarios.config(text="Aún no hay comentarios. ¡Sé el primero!")
+                    
+            else:
+                self.lbl_t.config(text="FIN DEL FEED")
+                self.lbl_c.config(text="No hay publicaciones disponibles.")
+                self.lbl_comentarios.config(text="")
+                
+            self.lbl_count.config(text=f"Publicaciones Totales: {self.lista_general.contador}")
     def publicar(self):
         """Crea una nueva publicación y la guarda en todas las listas"""
         t, c = self.ent_t.get(), self.txt_c.get("1.0", "end-1c")
@@ -235,6 +256,22 @@ class AppNeon(tk.Tk):
         if self.puntero_actual:
             self.puntero_actual.dato.likes += 1
             self.actualizar_pantalla()
+    
+    def agregar_comentario(self):
+        """Toma el texto de la cajita y lo añade a la lista de comentarios del post actual"""
+        texto = self.ent_comentario.get() # Obtenemos lo que el usuario escribió
+        
+        # Revisamos que no esté vacío y que estemos viendo un post válido
+        if texto.strip() and self.puntero_actual:
+            # Añadimos el comentario a la lista del objeto Publicacion
+            self.puntero_actual.dato.comentarios.append(texto) 
+            
+            # Limpiamos la cajita de texto para el próximo comentario
+            self.ent_comentario.delete(0, tk.END) 
+            
+            # Refrescamos la pantalla para que el comentario aparezca de inmediato
+            self.actualizar_pantalla() 
+            self.focus() # Quitamos el cursor de la cajita de texto
 
     def toggle_favorito(self):
         """Marca o desmarca el post como favorito"""
