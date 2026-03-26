@@ -2,106 +2,151 @@
   {
     "titulo": "Primer café del día",
     "cuerpo": "Nada como un buen espresso para arrancar.",
-    "likes": 12,
-    "comentarios": ["Totalmente de acuerdo", "Yo prefiero capuchino"],
+    "likes": 13,
+    "comentarios": [
+      "Totalmente de acuerdo",
+      "Yo prefiero capuchino"
+    ],
     "favorito": true
   },
   {
     "titulo": "Foto del atardecer",
     "cuerpo": "El cielo estaba increíble hoy.",
     "likes": 25,
-    "comentarios": ["Hermoso!", "Qué colores más vivos"],
+    "comentarios": [
+      "Hermoso!",
+      "Qué colores más vivos"
+    ],
     "favorito": false
   },
   {
     "titulo": "Nueva receta",
     "cuerpo": "Probé hacer pasta casera y salió genial.",
     "likes": 18,
-    "comentarios": ["Mándame la receta", "Se ve deliciosa"],
+    "comentarios": [
+      "Mándame la receta",
+      "Se ve deliciosa"
+    ],
     "favorito": true
   },
   {
     "titulo": "Entrenamiento",
     "cuerpo": "Hoy logré correr 5 km sin parar.",
     "likes": 9,
-    "comentarios": ["Grande!", "Yo apenas aguanto 2 km"],
+    "comentarios": [
+      "Grande!",
+      "Yo apenas aguanto 2 km"
+    ],
     "favorito": false
   },
   {
     "titulo": "Recomendación de libro",
     "cuerpo": "Lean 'Cien años de soledad', es una joya.",
     "likes": 33,
-    "comentarios": ["Mi favorito", "Lo tengo pendiente"],
+    "comentarios": [
+      "Mi favorito",
+      "Lo tengo pendiente"
+    ],
     "favorito": true
   },
   {
     "titulo": "Playlist nueva",
     "cuerpo": "Armé una lista de rock clásico, se las comparto.",
     "likes": 14,
-    "comentarios": ["Ponla en Spotify!", "Me encanta Queen"],
+    "comentarios": [
+      "Ponla en Spotify!",
+      "Me encanta Queen"
+    ],
     "favorito": false
   },
   {
     "titulo": "Viaje",
     "cuerpo": "Conociendo Antigua Guatemala, qué lugar más mágico.",
     "likes": 40,
-    "comentarios": ["Qué envidia!", "Disfruta mucho"],
+    "comentarios": [
+      "Qué envidia!",
+      "Disfruta mucho"
+    ],
     "favorito": true
   },
   {
     "titulo": "Película recomendada",
     "cuerpo": "Vi 'La La Land' y me encantó la música.",
     "likes": 22,
-    "comentarios": ["Es hermosa", "La fotografía es top"],
+    "comentarios": [
+      "Es hermosa",
+      "La fotografía es top"
+    ],
     "favorito": false
   },
   {
     "titulo": "Nuevo proyecto",
     "cuerpo": "Estoy empezando un curso de programación.",
     "likes": 16,
-    "comentarios": ["Éxitos!", "Qué lenguaje estás aprendiendo?"],
+    "comentarios": [
+      "Éxitos!",
+      "Qué lenguaje estás aprendiendo?"
+    ],
     "favorito": false
   },
   {
     "titulo": "Mascota feliz",
     "cuerpo": "Mi perro corrió todo el parque hoy.",
     "likes": 27,
-    "comentarios": ["Qué lindo!", "Sube foto"],
+    "comentarios": [
+      "Qué lindo!",
+      "Sube foto"
+    ],
     "favorito": true
   },
   {
     "titulo": "Desayuno saludable",
     "cuerpo": "Avena con frutas y miel, energía pura.",
     "likes": 11,
-    "comentarios": ["Yo también desayuno eso", "Se ve rico"],
+    "comentarios": [
+      "Yo también desayuno eso",
+      "Se ve rico"
+    ],
     "favorito": false
   },
   {
     "titulo": "Concierto",
     "cuerpo": "Anoche fui a ver a Coldplay, inolvidable.",
     "likes": 55,
-    "comentarios": ["Qué experiencia!", "Yo quiero ir"],
+    "comentarios": [
+      "Qué experiencia!",
+      "Yo quiero ir"
+    ],
     "favorito": true
   },
   {
     "titulo": "Nueva cámara",
     "cuerpo": "Compré una Canon y estoy probando fotos.",
     "likes": 19,
-    "comentarios": ["Qué modelo?", "Sube algunas tomas"],
+    "comentarios": [
+      "Qué modelo?",
+      "Sube algunas tomas"
+    ],
     "favorito": false
   },
   {
     "titulo": "Aprendiendo guitarra",
     "cuerpo": "Ya me sale 'Wonderwall' completa.",
     "likes": 8,
-    "comentarios": ["Clásico!", "Yo aprendí con esa también"],
+    "comentarios": [
+      "Clásico!",
+      "Yo aprendí con esa también"
+    ],
     "favorito": false
   },
   {
     "titulo": "Cena especial",
     "cuerpo": "Preparé sushi casero, quedó buenísimo.",
     "likes": 30,
-    "comentarios": ["Wow!", "Invita la próxima"],
+    "comentarios": [
+      "Wow!",
+      "Invita la próxima"
+    ],
     "favorito": true
   }
 ]
