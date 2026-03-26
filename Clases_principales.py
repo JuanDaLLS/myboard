@@ -42,7 +42,7 @@ class ListaSimple:
 
     def obtener_ranking(self):
         """Ordena los posts de más popular a menos popular"""
-        posts = []
+        posts = []  
         actual = self.cabeza
         while actual:
             posts.append(actual.dato) # Metemos todos los posts en una lista normal
@@ -51,15 +51,18 @@ class ListaSimple:
         return sorted(posts, key=lambda x: x.likes, reverse=True)
 
     def obtener_estadisticas(self):
-        """Suma todos los likes y comentarios de la red social"""
+        """Calcula el total de interacciones en la red social"""
         t_likes = 0
         t_comentarios = 0
+        t_favoritos = 0
         actual = self.cabeza
         while actual:
-            t_likes += actual.dato.likes # Suma los likes de este post al total
-            t_comentarios += len(actual.dato.comentarios) # Suma sus comentarios
+            t_likes += actual.dato.likes
+            t_comentarios += len(actual.dato.comentarios)
+            if actual.dato.es_favorito:
+                t_favoritos += 1
             actual = actual.siguiente
-        return t_likes, t_comentarios
+        return t_likes, t_comentarios, t_favoritos
 
 # --- LISTA DOBLE (NAVEGACIÓN) ---
 # Fila con la que podemos caminar de adelante y atras
