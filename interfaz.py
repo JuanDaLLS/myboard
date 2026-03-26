@@ -9,7 +9,7 @@ from Clases_principales import ListaSimple, ListaDoble, ListaCircular, GestorArc
 
 # --- DEFINICIÓN DEL OBJETO PUBLICACIÓN ---
 class Publicacion: 
-    def _init_(self, titulo, cuerpo):
+    def __init__(self, titulo, cuerpo):
         self.titulo = titulo  # Guarda el título del post
         self.cuerpo = cuerpo  # Guarda el texto o mensaje
         self.likes = 0        # Todos los posts empiezan con 0 likes
@@ -18,8 +18,8 @@ class Publicacion:
 
 # --- CLASE PRINCIPAL DE LA VENTANA ---
 class AppNeon(tk.Tk):
-    def _init_(self):
-        super()._init_()  # Inicializa la ventana de Windows/Mac/Linux
+    def __init__(self):
+        super().__init__()  # Inicializa la ventana de Windows/Mac/Linux
         self.title("URL Social - Edición Neon") # Título de la ventana
         self.geometry("400x750") # Tamaño de la ventana (forma de celular)
         
