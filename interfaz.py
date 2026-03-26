@@ -128,6 +128,9 @@ class AppNeon(tk.Tk):
         self.btn_circ = tk.Button(f_nav_btns, text="INF: OFF", command=self.toggle_circular, bg="#444444", fg="white", width=8)
         self.btn_circ.pack(side="left", padx=10)
         tk.Button(f_nav_btns, text="SIG ▶", command=self.siguiente).pack(side="left", padx=10)
+        # EXAMEN (TEXT< COMMAND)
+        #tk.Button(f_post, text="ACCIÓN", bg=self.col_neon_pink, fg="white",
+                #command=self.accion_examen, font=self.font_ui, bd=0).pack(pady=(5,0), fill="x", ipady=5)
 
     # logicaaa
 
@@ -246,6 +249,9 @@ class AppNeon(tk.Tk):
         if self.puntero_actual:
             self.puntero_actual.dato.es_favorito = not self.puntero_actual.dato.es_favorito
             self.actualizar_pantalla()
+
+    def accion_examen(self):
+        pass
 
     def cerrar_app(self):
         self.gestor.guardar(self.lista_general)
