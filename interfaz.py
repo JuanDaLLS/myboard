@@ -148,17 +148,15 @@ class AppNeon(tk.Tk):
         f_nav_btns = tk.Frame(f_nav_section, bg=self.col_bg_deep)
         f_nav_btns.pack()
         
-        # Botones Anterior, Switch y Siguiente
+    # Botones Anterior, Switch y Siguiente 
         tk.Button(f_nav_btns, text="◀ ANTERIOR", command=self.anterior).pack(side="left", padx=10)
-        
         self.btn_circ = tk.Button(f_nav_btns, text="OFF", command=self.toggle_circular, bg="#444444", fg="white", width=6)
         self.btn_circ.pack(side="left", padx=10)
-        
         tk.Button(f_nav_btns, text="SIGUIENTE ▶", command=self.siguiente).pack(side="left", padx=10)
         
-        self.lbl_status_circ = tk.Label(f_nav_section, text="ACTIVAR MODO CIRCULAR", bg=self.col_bg_deep)
-        self.lbl_status_circ.pack()
-
+        # NUEVO BOTÓN: Auto Scroll 
+        self.btn_auto = tk.Button(f_nav_btns, text="▶ AUTO OFF", command=self.toggle_auto, bg="#444444", fg="white")
+        self.btn_auto.pack(side="left", padx=10)
     # --- LÓGICA DE FUNCIONAMIENTO ---
 
     def actualizar_pantalla(self):
@@ -269,6 +267,31 @@ class AppNeon(tk.Tk):
         if self.puntero_actual:
             self.puntero_actual.dato.likes += 1
             self.actualizar_pantalla()
+    def ejecutar_auto_scroll(self):
+        """Pasa al siguiente post cada 5 segundos si está activo"""
+        if self.auto_repro: # Verifica que el usuario no lo haya apagado
+            
+            # ¡Truco especial! Si el modo circular no está activo, y llegamos al último post
+            if not self.modo_circular and self.puntero_actual.siguiente is None:
+                # Si llega al final, lo apagamos automáticamente
+                self.toggle_auto() 
+                messagebox.showinfo("Auto-Scroll", "Fin del feed, auto-scroll detenido.")
+                return 
+
+            # Simula que el usuario presionó el botón "Siguiente"
+            self.siguiente()
+            
+            # Vuelve a llamar a esta misma función en 5000 milisegundos (5 segundos)
+            self.after(5000, self.ejecutar_auto_scroll)
+
+    def toggle_auto(self):
+        """Enciende o apaga el pase automático de posts"""
+        self.auto_repro = not self.auto_repro # Cambia entre Encendido/Apagado
+        if self.auto_repro:
+            self.btn_auto.config(text="⏸ AUTO ON", bg=self.col_neon_cyan, fg="white") # Se pone Verde
+            self.ejecutar_auto_scroll() # Arranca el motor
+        else:
+            self.btn_auto.config(text="▶ AUTO OFF", bg="#444444", fg="white") # Regresa a Gris
     
     def agregar_comentario(self):
         """Toma el texto de la cajita y lo añade a la lista de comentarios del post actual"""
