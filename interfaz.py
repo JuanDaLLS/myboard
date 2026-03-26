@@ -38,7 +38,7 @@ class AppNeon(tk.Tk):
         self.font_body = font.Font(family="Helvetica Neue", size=11)
         self.font_ui = font.Font(family="Helvetica Neue", size=10, weight="bold")
 
-        # --- ESTRUCTURAS DE DATOS (El cerebro de la App) ---
+        # --- ESTRUCTURAS DE DATOS  ---
         self.lista_general = ListaSimple()    # Para guardar todo linealmente
         self.lista_nav = ListaDoble()         # Para poder ir "Atrás" y "Adelante"
         self.lista_infinito = ListaCircular() # Para que al llegar al final, regrese al inicio
@@ -99,6 +99,10 @@ class AppNeon(tk.Tk):
         tk.Button(f_post, text="PUBLICAR EN EL FEED", bg=self.col_neon_pink, fg="white", 
                   command=self.publicar, font=self.font_ui, bd=0).pack(pady=(15, 0), fill="x", ipady=5)
 
+        ### BOTON PARA VER RANKING DE PUBLICACIONES 
+        tk.Button(f_post, text="VER RANKING", bg=self.col_neon_cyan, fg="white",
+          command=self.ver_ranking, font=self.font_ui, bd=0).pack(pady=(5, 0), fill="x", ipady=5)
+        
         # --- 4. VISUALIZADOR DE LA PUBLICACIÓN (Tarjeta central) ---
         self.card = tk.Frame(self, bg=self.col_bg_card, highlightthickness=2, highlightbackground=self.col_neon_cyan)
         self.card.pack(fill="both", expand=True, padx=15, pady=10)
@@ -250,7 +254,16 @@ class AppNeon(tk.Tk):
             messagebox.showinfo("Resultados", msg)
         else:
             messagebox.showinfo("Búsqueda", "No se encontró nada.")
-
+    def ver_ranking(self):
+        ranking = self.lista_general.obtener_ranking()
+        if not ranking:
+            messagebox.showinfo("Ranking", "No hay publicaciones aún.")
+            return
+        msg = "TOP PUBLICACIONES\n\n"
+        for i, p in enumerate(ranking[:5], 1):
+            msg += f"{i}. {p.titulo} — {p.likes} likes\n"
+        messagebox.showinfo("Ranking", msg)
+        
     def dar_like(self):
         """Suma un corazón al post actual"""
         if self.puntero_actual:
